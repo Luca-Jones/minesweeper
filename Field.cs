@@ -1,3 +1,5 @@
+using System.Security.Cryptography.X509Certificates;
+
 public class Field {
 
     public List<Tile> Tiles;
@@ -124,19 +126,7 @@ public class Field {
 
             } else if (thisTile.adjacent == 0) {
 
-                thisTile.reveal();
-
-                int[] dx = [-1,0,0,1];
-                int[] dy = [0,1,-1,0];
-
-                for (int i = 0; i < 4; i ++) {
-                    
-                    if (this.IsInBounds(x + dx[i], y + dy[i])) {
-
-                        this.Mine(x + dx[i], y + dy[i]);                        
-                        
-                    }
-                }
+                MineHelper(thisTile, x, y);
 
             } else {
 
@@ -153,19 +143,7 @@ public class Field {
 
             } else if (thisTile.adjacent == 0) {
 
-                thisTile.reveal();
-
-                int[] dx = [-1,0,0,1];
-                int[] dy = [0,1,-1,0];
-
-                for (int i = 0; i < 4; i ++) {
-                    
-                    if (this.IsInBounds(x + dx[i], y + dy[i])) {
-
-                        this.Mine(x + dx[i], y + dy[i]);                        
-                        
-                    }
-                }
+                MineHelper(thisTile, x, y);
 
             } else {
 
@@ -179,6 +157,21 @@ public class Field {
 
         return;
 
+    }
+
+    public void MineHelper(Tile thisTile, int x, int y) {
+        
+        thisTile.reveal();
+        
+        for (int dx = -1; dx <= 1; dx ++) {
+            for (int dy = -1; dy <= 1; dy ++) {
+                if (IsInBounds(x + dx, y + dy) && (dx == 0 || dy == 0 || this.TileAt(x + dx, y + dy).adjacent > 0)) {
+
+                    Mine(x + dx, y + dy);
+
+                }
+            }
+        }
     }
 
     public bool IsInBounds(int x, int y) {
