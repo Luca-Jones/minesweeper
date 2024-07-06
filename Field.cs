@@ -122,7 +122,28 @@ public class Field {
 
             if (thisTile.revealed) {
 
+                thisTile.reveal();
+
+                for (int dx = -1; dx <= 1; dx ++) {
+                    for (int dy = -1; dy <= 1; dy ++) {
+                        if (IsInBounds(x + dx, y + dy)) {
+
+                            Tile nextTile = this.TileAt(x + dx, y + dy);
+
+                            if (nextTile.revealed || nextTile.flagged) {
+                                continue;
+                            } else if (nextTile.isMine) {
+                                this.mineHit = true;
+                            } else {
+                                nextTile.reveal();
+                            }
+
+                        }
+                    }
+                }
+
                 return;
+
 
             } else if (thisTile.adjacent == 0) {
 
