@@ -4,5 +4,6 @@
 void show_cursor();
 void hide_cursor();
 void clear_screen();
+void cursor_home();
 
 #endif
