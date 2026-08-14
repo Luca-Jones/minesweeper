@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
     start_input(&info);
     hide_cursor();
     clear_screen();
-    print_field(HEIGHT, WIDTH, field, cursor_x, cursor_y);
+    print_field(HEIGHT, WIDTH, MINES, field, cursor_x, cursor_y);
     int key = 0;
     int is_game_over = 0;
     int armed_x = -1, armed_y = -1;  /* first mine-press on a revealed tile arms a chord here */
@@ -97,7 +97,7 @@ int main(int argc, char *argv[]) {
             }
 
             cursor_home();
-            print_field(HEIGHT, WIDTH, field, cursor_x, cursor_y);
+            print_field(HEIGHT, WIDTH, MINES, field, cursor_x, cursor_y);
 
             if (is_game_over) {
                 cursor_home();
@@ -108,7 +108,7 @@ int main(int argc, char *argv[]) {
                 }
                 cursor_x = -1;
                 cursor_y = -1;
-                print_field(HEIGHT, WIDTH, field, cursor_x, cursor_y);
+                print_field(HEIGHT, WIDTH, MINES, field, cursor_x, cursor_y);
                 printf("Game Over! You hit a mine :(\n");
             } else if (is_field_finished(HEIGHT, WIDTH, field)) {
                 printf("You win!\n");

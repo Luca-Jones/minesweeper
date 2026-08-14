@@ -11,14 +11,14 @@ static void on_sigint(int sig) {
     write(STDOUT_FILENO, "\033[?25h\n", 7);
     struct termios t;
     tcgetattr(0, &t);
-    t.c_lflag |= ICANON;
+    t.c_lflag |= ICANON | ECHO;
     tcsetattr(0, TCSANOW, &t);
     _exit(130);
 }
 
 void start_input(input *info) {
     tcgetattr(0, info);            /* get current terminal attirbutes; 0 is the file descriptor for stdin */
-    info->c_lflag &= ~ICANON;      /* disable canonical mode */
+    info->c_lflag &= ~(ICANON | ECHO); /* disable canonical mode and key echo */
     info->c_cc[VMIN] = 1;          /* wait until at least one keystroke available */
     info->c_cc[VTIME] = 0;         /* no timeout */
     tcsetattr(0, TCSANOW, info);   /* set immediately */
@@ -31,6 +31,6 @@ int read_key() {
 
 void end_input(input *info) {
     tcgetattr(0, info);
-    info->c_lflag |= ICANON;
+    info->c_lflag |= ICANON | ECHO;
     tcsetattr(0, TCSANOW, info);
 }

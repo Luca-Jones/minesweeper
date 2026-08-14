@@ -75,7 +75,8 @@ void init_field(int height, int width, int mines, tile_t field[height][width]) {
 
 }
 
-void print_field(int height, int width, tile_t field[height][width], int cursor_x, int cursor_y) {
+void print_field(int height, int width, int mines, tile_t field[height][width], int cursor_x, int cursor_y) {
+    int flags = 0;
     printf("╔═");
     for (int i = 0; i < width; i ++) {
         printf("══");
@@ -86,6 +87,7 @@ void print_field(int height, int width, tile_t field[height][width], int cursor_
         printf("║ ");
         for (int col = 0; col < width; col ++) {
             tile_t current_tile = field[row][col];
+            if (current_tile.is_flagged) flags++;
             if (col == cursor_x && row == cursor_y) {
                 printf("██");
             } else if (current_tile.is_revealed) {
@@ -108,6 +110,10 @@ void print_field(int height, int width, tile_t field[height][width], int cursor_
         printf("══");
     }
     printf("═╝\n");
+    /* ponytail: counted in the loop above instead of tracked in a variable —
+       flood-fill reveal clears flags, so any external counter would desync.
+       \033[K because this line isn't fixed-width like the frame. */
+    printf("Flags: %d/%d\033[K\n", flags, mines);
 }
 
 int is_field_finished(int height, int width, tile_t field[height][width]) {
