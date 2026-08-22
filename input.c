@@ -1,5 +1,37 @@
 #include "input.h"
 #include <stdio.h>
+
+#ifdef _WIN32
+
+#include <windows.h>
+#include <conio.h>
+
+void start_input(input *info) {
+    HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
+    DWORD mode = 0;
+    GetConsoleMode(out, &mode);
+    info->out_mode = mode;
+    SetConsoleMode(out, mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING); /* make ANSI escapes work */
+    info->codepage = GetConsoleOutputCP();
+    SetConsoleOutputCP(CP_UTF8);                                    /* make box-drawing chars work */
+}
+
+int read_key() {
+    int key = _getch();
+    if (key == 0 || key == 224) {  /* arrow/function keys come as two codes; swallow the second */
+        _getch();
+        return 0;
+    }
+    return key;
+}
+
+void end_input(input *info) {
+    SetConsoleMode(GetStdHandle(STD_OUTPUT_HANDLE), info->out_mode);
+    SetConsoleOutputCP(info->codepage);
+}
+
+#else
+
 #include <termios.h>
 #include <signal.h>
 #include <unistd.h>
@@ -34,3 +66,5 @@ void end_input(input *info) {
     info->c_lflag |= ICANON | ECHO;
     tcsetattr(0, TCSANOW, info);
 }
+
+#endif
